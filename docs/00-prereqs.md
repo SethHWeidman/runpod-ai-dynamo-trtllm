@@ -1,4 +1,6 @@
-# Why the startup command is needed (RunPod + VS Code Remote-SSH)
+# Setting up the container so VS Code can connect to it
+
+## Why the startup command is needed (RunPod + VS Code Remote-SSH)
 
 RunPod pods expose a container over a public "SSH over exposed TCP" port (public IP + external port mapped to container port `22`). But most container images do not start an SSH daemon by default, and even if `openssh-server` is installed, `sshd` won't run unless a few runtime prerequisites exist. VS Code Remote-SSH specifically requires a working SSH server inside the container so it can upload and run the VS Code server.
 
