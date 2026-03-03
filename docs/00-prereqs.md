@@ -38,3 +38,13 @@ This startup command makes the container Remote-SSH-ready every time the pod boo
   `/usr/sbin/sshd` launches the SSH server. `sleep infinity` prevents the container from exiting immediately (containers exit when the main process ends), keeping SSH available for VS Code and terminal sessions.
 
 In short: the startup command turns a generic container into a stable Remote-SSH target by provisioning SSH, keys, host identity, and a long-running process so the pod stays reachable.
+
+## Setting up the template in the RunPod UI
+
+This screenshot shows the template editor with the startup command pasted into the "Docker Command" or startup command field. This is the command from above, and it ensures the container boots with a working SSH server so VS Code can connect.
+
+![RunPod Template Creation: Startup Command](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/runpod_template_1.png)
+
+This screenshot shows the template networking section and environment variables. You need a **TCP** port that maps external traffic to container port `22` for SSH. The **HTTP** port is optional; add it only if you plan to expose a web service like Dynamo's OpenAI-compatible REST API (for example, `python -m dynamo.frontend --http-host 0.0.0.0 --http-port 8000` serving `/v1/chat/completions`) to clients outside the pod. If you don't expose it, the service is still reachable from inside the pod (e.g., `curl localhost:8000`), but your laptop or other external clients won't be able to hit it. It also shows the `PUBLIC_KEY` environment variable, which should be set to your SSH public key so the startup command can authorize it.
+
+![RunPod Template Creation: HTTP and TCP ports, environment variables](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/runpod_template_2.png)
