@@ -60,6 +60,22 @@ For the container list here: [NGC tensorrtllm-runtime](https://catalog.ngc.nvidi
 
 ![RunPod Dynamo TensorRT-LLM image](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/runpod_template_image_1.png)
 
+## Setting up the RunPod instance
+
+First, under "Pods", click "Network Volume" and select the volume we created in "Storage". By doing this, once we connect to and download the HuggingFace model into the `/workspace` folder, if we Terminate our instance, we will still have the models downloaded.
+
+![Mount volume as storage](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/instance_creation_1_volume.png)
+
+Second, select an H100 SXM instance, set the GPU count to 4, and click "Change Template" (as of this writing in March 2026, 4x H100 comes out to $10.76/hr on-demand).
+
+![Select H100 SXM](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/instance_creation_2_h100.png)
+
+![Set GPU count to 4 and click Change Template](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/instance_creation_3_change_template.png)
+
+Then, select the `nvcr.io/nvidia/ai-dynamo/tensorrtllm-runtime:0.6.1` template (the one we configured above with the startup command).
+
+![Select Template](https://runpod-ai-dynamo-trtllm.s3.us-east-1.amazonaws.com/public/instance_creation_4_template.png)
+
 ## VSCode Connections
 
 Note: this section assumes familiarity with connecting to remote instances via the Remote-SSH extension in VSCode; it merely covers a couple quirks encountered when connecting to _RunPod instances specifically_.
