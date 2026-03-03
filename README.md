@@ -13,3 +13,4 @@ First, go to runpod.io. We're going to want to:
 1. Create a storage volume
 2. Create a template with TensorRT-LLM and Dynamo installed — [docs/00-template-setup.md](docs/00-template-setup.md)
 3. Start a RunPod pod and connect via VS Code — [docs/01-instance-and-vscode.md](docs/01-instance-and-vscode.md)
+4. Download the model — [docs/02-download_model.md](docs/02-download_model.md)
