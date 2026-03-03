@@ -40,4 +40,91 @@ Host runpod-4x-h100
 
 Replacing the `HostName` with your host name and the `Port` with your port. The `ServerAliveInterval` and `ServerAliveCountMax` lines are "keep the SSH tunnel alive" settings so your connection doesn't get silently dropped by NATs, firewalls, or idle timeouts (common with cloud pods and long-running VS Code sessions). `ServerAliveInterval 60` means the client sends a small keepalive message every 60 seconds; `ServerAliveCountMax 120` means it will retry up to 120 times before giving up. In the worst case, SSH will tolerate about 60 x 120 = 7200 seconds = 2 hours of a bad/stalled network before declaring the connection dead.
 
-To connect to the server via the VS Code extension, we first have to confirm that we accept the fingerprint. Run the "SSH exposed over TCP" command _in a Terminal_ and type "yes" when prompted. Then you should be able to connect to the `runpod-4x-h100` instance via the Remote SSH extension. Using the "Open Folder" functionality, you should be able to connect directly to the `/workspace` folder where your persistent data is being saved (because of the volume we attached).
+To connect to the server via the VS Code extension, we first have to confirm that we accept the fingerprint. Run the "SSH exposed over TCP" command _in a Terminal_ and type "yes" when prompted. It will look like this:
+
+```
+(py3_12) seth@Seths-MacBook-Pro-3 ~ % ssh root@216.243.220.226 -p 19369 -i ~/.ssh/id_ed25519
+The authenticity of host '[216.243.220.226]:19369 ([216.243.220.226]:19369)' can't be established.
+ED25519 key fingerprint is: SHA256:CT5D1MoxGPGcZxRO5czBaOxd1LCkOUjgghiLcwa9rKM
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:20: <your-ip>:<your-port>
+    ...
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
+
+Once you type "yes", in your Terminal, you should see:
+
+```
+Warning: Permanently added '[216.243.220.226]:19369' (ED25519) to the list of known hosts.
+Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-90-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                @@@@@@@@@@@@@@@     @@@@@@@@@@@@@@@@@@@@@@@@@
+             @@@@@@@@@@   @@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@
+          @@@@@@@@     @@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@
+        @@@@@@@    @@@@@@@@      @@@@@@@    @@@@@@@@@@@@@@@@@
+      @@@@@@@@   @@@@@@@  @@@@      @@@@@@    @@@@@@@@@@@@@@@
+      @@@@@@@   @@@@@@    @@@@@@   @@@@@@@   @@@@@@@@@@@@@@@@
+       @@@@@@@  @@@@@@    @@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@
+        @@@@@@   @@@@@@   @@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@
+         @@@@@@@  @@@@@@@ @@@@@@@@@@   @@@@@@@@@      @@@@@@@
+           @@@@@@   @@@@@@@@@@@@@    @@@@@@@@         @@@@@@@
+             @@@@@@    @@@@     @@@@@@@@@@          @@@@@@@@@
+               @@@@@@@    @@@@@@@@@@@@@        @@@@@@@@@@@@@@
+                 @@@@@@@@@@@@@@@@@        @@@@@@@@@@@@@@@@@@@
+                     @@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+  @@@@@@@@@     @@@@      @@@@ @@@@  @@@@@@@@       @@@@       @@@@@
+ @@@@@@@@@@@@@  @@@@@    @@@@@ @@@@@ @@@@@@@@@@@@@  @@@@@     @@@@@@@
+ @@@@@@@@@@@@@@ @@@@@@  @@@@@  @@@@@ @@@@@@@@@@@@@@ @@@@@    @@@@@@@@@
+ @@@@@    @@@@@@@@@@@@  @@@@@  @@@@@ @@@@@    @@@@@ @@@@@   @@@@@ @@@@@
+ @@@@@     @@@@@ @@@@@@@@@@@   @@@@@ @@@@@    @@@@@ @@@@@  @@@@@  @@@@@@
+ @@@@@     @@@@@  @@@@@@@@@@   @@@@@ @@@@@   @@@@@@ @@@@@  @@@@@@@@@@@@@
+ @@@@@     @@@@@  @@@@@@@@@    @@@@@ @@@@@@@@@@@@@@ @@@@@ @@@@@@@@@@@@@@@
+ @@@@@     @@@@@   @@@@@@@     @@@@@ @@@@@@@@@@@@@  @@@@@@@@@@@     @@@@@@
+  @@@       @@@      @@@@       @@@   @@@@@@@        @@   @@@         @@@  ®
+
+Dynamo: A Datacenter Scale Distributed Inference Serving Framework
+
+This is a minimum runtime container for interacting with Dynamo via our CLI
+tools.
+
+Try the following to begin interacting with a model:
+> dynamo --help
+> python -m dynamo.frontend [--http-port 8000]
+> python -m dynamo.vllm --model Qwen/Qwen2.5-3B-Instruct
+
+To run more complete deployment examples, instances of etcd and nats need to be
+accessible within the container. This is generally done by connecting to
+existing etcd/nats services from the host or other containers. For simple
+cases, you can start them in the container as well:
+> nats-server -js &
+> etcd --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://0.0.0.0:2379 --data-dir /tmp/etcd &
+
+With etcd/nats accessible, run the examples:
+> cd examples
+```
+
+Then you should be able to connect to the `runpod-4x-h100` instance via the Remote SSH extension. Using the "Open Folder" functionality, you should be able to connect directly to the `/workspace` folder where your persistent data is being saved (because of the volume we attached). As noted above, we don't include screenshots for this here because we assume you've done this before.
