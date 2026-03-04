@@ -9,19 +9,15 @@ Open up a new Terminal and run the Dynamo frontend: `python -m dynamo.frontend -
 `python -m dynamo.trtllm` imports and initializes TensorRT-LLM at runtime, which loads TensorRT shared libraries (`.so` files). The `tensorrtllm-runtime` container doesn't ship the full TRT runtime set, so without installing these you'll hit `ImportError: libnvinfer.so.10: cannot open shared object file`, or failures when TRT-LLM tries to create or deserialize engines and plugins.
 
 ```bash
-apt-get update
 apt-get install -y \
   libnvinfer10 \
   libnvonnxparsers10 \
   libnvinfer-plugin10
-ldconfig
 ```
 
 - **`libnvinfer10`** — core TensorRT runtime (`libnvinfer.so.10`). The big one.
 - **`libnvinfer-plugin10`** — TensorRT plugin library (`libnvinfer_plugin.so.10`). TRT-LLM uses plugins heavily (attention, GEMM variants, quant kernels, etc.); missing this breaks engine init even if `libnvinfer10` is present.
 - **`libnvonnxparsers10`** — ONNX parser (`libnvonnxparser.so.10`). Not always needed for pure engine loading, but many build/convert paths import it and its absence commonly causes surprise runtime failures.
-
-Run `ldconfig` after installing so the dynamic linker can find the libs without having to modify `LD_LIBRARY_PATH`. Note: you need to do this once per container filesystem — on RunPod you often start fresh containers, so it needs to be re-run each time.
 
 Moreover, we have to set several environment variables to get the Dynamo backend to run:
 

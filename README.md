@@ -16,3 +16,5 @@ First, go to runpod.io. We're going to want to:
 4. Download the model — [docs/02-download_model.md](docs/02-download_model.md)
 5. Start etcd and NATS — [docs/03-etcd-nats.md](docs/03-etcd-nats.md)
 6. Run Dynamo — [docs/04-dynamo.md](docs/04-dynamo.md)
+
+On every instance restart, see [docs/05-restart.md](docs/05-restart.md).
