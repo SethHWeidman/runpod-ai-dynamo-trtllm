@@ -4,6 +4,12 @@ Since we're running on a single RunPod pod (not Kubernetes), we need to start `e
 
 > etcd and NATS remain available as optional alternatives for non-Kubernetes environments.
 
+**Why etcd?** Dynamo uses `etcd` as its default service-discovery backend in bare-metal and single-pod deployments. Workers register their available endpoints in etcd under a predictable key hierarchy, and frontends/routers watch those keys to get real-time updates as workers join or leave. In disaggregated prefill/decode setups, etcd also stores KV-cache metadata (NIXL memory descriptors) so prefill workers can lazily load it and then perform direct GPU-to-GPU transfers without shipping bulky descriptors on every request.
+
+**Why NATS?** Dynamo uses NATS as its messaging fabric for publish/subscribe and request/reply between services. In disaggregated mode, the prefill queue is backed by NATS, and prefill workers pull work via a consumer group. NATS is also central to KV-cache-aware routing: backend workers publish KV lifecycle events (alloc/evict) and the router consumes them to maintain an up-to-date view of which blocks live on which workers. Running NATS with [JetStream](https://docs.nats.io/nats-concepts/jetstream) (`-js`) adds persistence and replay of events, which makes behavior more fault-tolerant across restarts.
+
+**Why not needed on Kubernetes?** On Kubernetes, Dynamo can swap etcd service discovery for native K8s resources ([EndpointSlices](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/)), and some router/event configurations can run without etcd or NATS entirely. For a single-pod, non-K8s setup like ours, etcd + NATS is the straightforward way to get both service discovery and messaging.
+
 Links: [etcd](https://etcd.io), [NATS](https://docs.nats.io).
 
 **1. Create the logs directory** (needed for log redirection below):
