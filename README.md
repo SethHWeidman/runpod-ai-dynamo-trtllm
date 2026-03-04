@@ -15,3 +15,4 @@ First, go to runpod.io. We're going to want to:
 3. Start a RunPod pod and connect via VS Code — [docs/01-instance-and-vscode.md](docs/01-instance-and-vscode.md)
 4. Download the model — [docs/02-download_model.md](docs/02-download_model.md)
 5. Start etcd and NATS — [docs/03-etcd-nats.md](docs/03-etcd-nats.md)
+6. Run Dynamo — [docs/04-dynamo.md](docs/04-dynamo.md)
